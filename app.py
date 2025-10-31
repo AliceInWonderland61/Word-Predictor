@@ -11,7 +11,12 @@ model = AutoModelForCausalLM.from_pretrained(model_name)
 # 🍓 2️⃣ Function that predicts top 5 next words for each token
 def predict_next_words(text):
     if not text.strip():
-        return "Please type something 💕"
+        return """
+        <div class='response-box'>
+            <span class='response-label'>Predicted Next Tokens 🍓</span>
+            Type something above to see predictions 💕
+        </div>
+        """
 
     inputs = tokenizer(text, return_tensors="pt")
     input_ids = inputs["input_ids"][0]
@@ -33,6 +38,7 @@ def predict_next_words(text):
     # ✨ Return output wrapped in a styled div
     return f"""
     <div class='response-box'>
+        <span class='response-label'>Predicted Next Tokens 🍓</span>
         {'<br>'.join(results)}
     </div>
     """
@@ -40,10 +46,11 @@ def predict_next_words(text):
 # 🍓 3️⃣ Custom CSS — cute, readable, and clear output box
 custom_css = """
 body {
-    background-color: #FFE6EB;
+    background: linear-gradient(180deg, #fff8fa 0%, #ffe6eb 35%, #ffd6e0 100%);
+    background-attachment: fixed;
 }
 .gradio-container {
-    background-color: #FFE6EB !important;
+    background: transparent !important;
 }
 textarea, input {
     background-color: #fffdfd !important;
@@ -54,35 +61,46 @@ textarea, input {
     padding: 8px !important;
 }
 button {
-    background-color: #ffb6c1 !important;
+    background: linear-gradient(90deg, #ffb6c1, #ff9eb0);
     color: white !important;
     border-radius: 12px !important;
     font-weight: bold !important;
     transition: 0.3s ease;
 }
 button:hover {
-    background-color: #ffa8b8 !important;
+    background: linear-gradient(90deg, #ff9eb0, #ffb6c1);
 }
-/* 🍓 Output box styling (like “Generated Response”) */
+
+/* 🍓 Output box styling (persistent) */
 .response-box {
-    background-color: #ffd6e0 !important; /* soft strawberry cream */
-    border: 2px solid #ffb6c1 !important;
-    border-radius: 12px !important;
-    padding: 15px !important;
-    color: #4b2b30 !important;
-    font-size: 16px !important;
+    background-color: rgba(255, 230, 235, 0.9);
+    border: 2px solid #ffb6c1;
+    border-radius: 15px;
+    padding: 20px;
+    color: #4b2b30;
+    font-size: 16px;
     line-height: 1.6;
-    margin-top: 10px;
-    box-shadow: 2px 3px 6px rgba(255, 182, 193, 0.4);
+    margin-top: 15px;
+    box-shadow: 3px 4px 8px rgba(255, 182, 193, 0.3);
     white-space: pre-wrap;
+    min-height: 150px;
+    width: 100%;
 }
 .response-label {
     font-weight: bold;
     color: #d36b83;
     font-size: 18px;
     font-family: "Poppins", sans-serif;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
     display: block;
+    border-bottom: 1.5px dashed #ffc9d6;
+    padding-bottom: 5px;
+    text-align: center;
+}
+/* 🍰 Force the output box to always show */
+#output-box {
+    display: block !important;
+    width: 100%;
 }
 h1, h3 {
     color: #d36b83;
@@ -100,7 +118,20 @@ with demo:
         placeholder="Type your text here... 🍰",
         label="Your Text 💌"
     )
-    output = gr.HTML(label="Generated Response 🍓")  # visible output box label
+
+    with gr.Row():
+        output = gr.HTML(
+            value="""
+            <div class='response-box'>
+                <span class='response-label'>Predicted Next Tokens 🍓</span>
+                Type something above to see predictions 💕
+            </div>
+            """,
+            elem_id="output-box",
+            label="Generated Response 🍓",
+            show_label=False
+        )
+
     generate_btn = gr.Button("✨ Predict Next Words ✨")
     generate_btn.click(predict_next_words, inputs=text_input, outputs=output)
     gr.HTML("<p style='text-align:center;color:#c07085;'>Powered by 🍓 Effort</p>")
