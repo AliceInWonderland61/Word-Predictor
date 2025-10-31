@@ -41,8 +41,8 @@ body {
     background-color: #FFE6EB !important;
 }
 textarea, input {
-    background-color: #fffdfd !important; /* softer white */
-    color: #5a3d3d !important; /* dark berry brown text */
+    background-color: #fffdfd !important;
+    color: #5a3d3d !important; /* darker text inside input */
     border-radius: 20px !important;
     border: 2px solid #ffc9d6 !important;
     font-size: 16px !important;
@@ -58,33 +58,40 @@ button {
 button:hover {
     background-color: #ffa8b8 !important;
 }
-.output-markdown {
-    background-color: #fff0f5 !important;
-    border-radius: 15px !important;
-    padding: 10px;
+.output-box {
+    background-color: #fff8fa !important;
+    border: 2px solid #ffc9d6 !important;
+    border-radius: 12px !important;
+    padding: 15px !important;
     color: #4b2b30 !important;
+    font-size: 16px !important;
+    line-height: 1.6;
+    box-shadow: 2px 3px 6px rgba(255, 182, 193, 0.3);
+}
+.output-box strong {
+    color: #d36b83;
 }
 h1, h3 {
     color: #d36b83;
     font-family: "Comic Sans MS", "Poppins", sans-serif;
     text-align: center;
 }
-""" 
+"""
 
 
 # 🍓 4️⃣ Define Gradio interface
 demo = gr.Blocks(css=custom_css)
 
 with demo:
-    gr.HTML("<h1>🍓 Sweet Strawberry Predictor 🍓</h1><h3>Type a sweet sentence and see what the AI thinks comes next!</h3>")
+    gr.HTML("<h1>🍓 Word Predictor 🍓</h1><h3>Type a sweet sentence and see what the AI thinks comes next!</h3>")
     text_input = gr.Textbox(
         placeholder="Type your text here... 🍰",
-        label="Your Text 💌"
+        label="Input Text 💌"
     )
     output = gr.Markdown(label="Predicted Next Words 🍓")
     generate_btn = gr.Button("✨ Predict Next Words ✨")
     generate_btn.click(predict_next_words, inputs=text_input, outputs=output)
-    gr.HTML("<p style='text-align:center;color:#c07085;'>Made with 🍓 by Alissen</p>")
+    gr.HTML("<p style='text-align:center;color:#c07085;'>Powered by 🍓 Effort </p>")
 
 # 🍓 5️⃣ Launch app (required for local + HF Spaces)
 if __name__ == "__main__":
