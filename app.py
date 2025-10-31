@@ -3,20 +3,20 @@ import torch.nn.functional as F
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import gradio as gr
 
-# 🍓 1️⃣ Load the model and tokenizer
+# 🍓 1️⃣ Load model + tokenizer
 model_name = "gpt2"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModelForCausalLM.from_pretrained(model_name)
 
-# 🍓 2️⃣ Define the function that predicts top 5 next tokens for each word
+# 🍓 2️⃣ Function that predicts top 5 next words for each token
 def predict_next_words(text):
     if not text.strip():
         return "Please type something 💕"
 
     inputs = tokenizer(text, return_tensors="pt")
     input_ids = inputs["input_ids"][0]
-
     results = []
+
     for i in range(len(input_ids)):
         prefix = input_ids[:i + 1].unsqueeze(0)
         with torch.no_grad():
@@ -30,9 +30,14 @@ def predict_next_words(text):
         current_token = current_token if current_token.strip() else "(space)"
         results.append(f"**{current_token}** → {', '.join(top_tokens)}")
 
-    return "\n".join(results)
+    # ✨ Return output wrapped in a styled div
+    return f"""
+    <div class='response-box'>
+        {'<br>'.join(results)}
+    </div>
+    """
 
-# 🍓 3️⃣ Custom pastel-pink CSS theme
+# 🍓 3️⃣ Custom CSS — cute, readable, and clear output box
 custom_css = """
 body {
     background-color: #FFE6EB;
@@ -42,7 +47,7 @@ body {
 }
 textarea, input {
     background-color: #fffdfd !important;
-    color: #5a3d3d !important; /* darker text inside input */
+    color: #5a3d3d !important;
     border-radius: 20px !important;
     border: 2px solid #ffc9d6 !important;
     font-size: 16px !important;
@@ -58,18 +63,27 @@ button {
 button:hover {
     background-color: #ffa8b8 !important;
 }
-.output-box {
-    background-color: #fff8fa !important;
-    border: 2px solid #ffc9d6 !important;
+
+/* 🍓 Output box styling (like “Generated Response”) */
+.response-box {
+    background-color: #ffd6e0 !important; /* soft strawberry cream */
+    border: 2px solid #ffb6c1 !important;
     border-radius: 12px !important;
     padding: 15px !important;
     color: #4b2b30 !important;
     font-size: 16px !important;
     line-height: 1.6;
-    box-shadow: 2px 3px 6px rgba(255, 182, 193, 0.3);
+    margin-top: 10px;
+    box-shadow: 2px 3px 6px rgba(255, 182, 193, 0.4);
+    white-space: pre-wrap;
 }
-.output-box strong {
+.response-label {
+    font-weight: bold;
     color: #d36b83;
+    font-size: 18px;
+    font-family: "Poppins", sans-serif;
+    margin-bottom: 5px;
+    display: block;
 }
 h1, h3 {
     color: #d36b83;
@@ -78,21 +92,20 @@ h1, h3 {
 }
 """
 
-
-# 🍓 4️⃣ Define Gradio interface
+# 🍓 4️⃣ Build the Gradio UI
 demo = gr.Blocks(css=custom_css)
 
 with demo:
     gr.HTML("<h1>🍓 Word Predictor 🍓</h1><h3>Type a sweet sentence and see what the AI thinks comes next!</h3>")
     text_input = gr.Textbox(
         placeholder="Type your text here... 🍰",
-        label="Input Text 💌"
+        label="Your Text 💌"
     )
-    output = gr.Markdown(label="Predicted Next Words 🍓")
+    output = gr.HTML(label="Generated Response 🍓")  # visible output box label
     generate_btn = gr.Button("✨ Predict Next Words ✨")
     generate_btn.click(predict_next_words, inputs=text_input, outputs=output)
-    gr.HTML("<p style='text-align:center;color:#c07085;'>Powered by 🍓 Effort </p>")
+    gr.HTML("<p style='text-align:center;color:#c07085;'>Powered by 🍓 Effort</p>")
 
-# 🍓 5️⃣ Launch app (required for local + HF Spaces)
+# 🍓 5️⃣ Launch
 if __name__ == "__main__":
     demo.launch()
