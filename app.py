@@ -14,13 +14,16 @@ def predict_next_words(text):
         return """
         <div class='response-box'>
             <span class='response-label'>Predicted Next Tokens 🍓</span>
-            Type something above to see predictions 💕
+            <p class='placeholder-text'>Type something above to see predictions 💕</p>
         </div>
         """
 
     inputs = tokenizer(text, return_tensors="pt")
     input_ids = inputs["input_ids"][0]
-    results = []
+    results_html = ["<table class='prediction-table'>"]
+
+    # 🧁 Add header row
+    results_html.append("<tr><th>Token</th><th>Top 5 Predictions</th></tr>")
 
     for i in range(len(input_ids)):
         prefix = input_ids[:i + 1].unsqueeze(0)
@@ -31,15 +34,16 @@ def predict_next_words(text):
             topk = torch.topk(probs, k=5)
             top_tokens = [tokenizer.decode([tid]).strip() for tid in topk.indices[0]]
 
-        current_token = tokenizer.decode([input_ids[i]])
-        current_token = current_token if current_token.strip() else "(space)"
-        results.append(f"**{current_token}** → {', '.join(top_tokens)}")
+        current_token = tokenizer.decode([input_ids[i]]).strip() or "(space)"
+        preds = ", ".join(top_tokens)
+        results_html.append(f"<tr><td class='token-cell'>{current_token}</td><td class='pred-cell'>{preds}</td></tr>")
 
-    # ✨ Return output wrapped in a styled div
+    results_html.append("</table>")
+
     return f"""
     <div class='response-box'>
         <span class='response-label'>Predicted Next Tokens 🍓</span>
-        {'<br>'.join(results)}
+        {''.join(results_html)}
     </div>
     """
 
@@ -107,6 +111,45 @@ h1, h3 {
     font-family: "Comic Sans MS", "Poppins", sans-serif;
     text-align: center;
 }
+
+/* 🍓 Table styling for predictions */
+.prediction-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+.prediction-table th {
+    background-color: #ffe6eb;
+    color: #d36b83;
+    text-align: center;
+    font-family: "Poppins", sans-serif;
+    padding: 6px;
+    border-bottom: 2px dashed #ffc9d6;
+}
+.prediction-table td {
+    padding: 6px 10px;
+    color: #4b2b30;
+    border-bottom: 1px solid #ffd3de;
+    vertical-align: top;
+}
+.token-cell {
+    font-weight: bold;
+    text-align: right;
+    width: 25%;
+    color: #c45c77;
+    padding-right: 10px;
+}
+.pred-cell {
+    text-align: left;
+    font-style: italic;
+    width: 75%;
+}
+.placeholder-text {
+    text-align: center;
+    color: #a86a7a;
+    font-style: italic;
+    margin-top: 8px;
+}
 """
 
 # 🍓 4️⃣ Build the Gradio UI
@@ -123,7 +166,8 @@ with demo:
         output = gr.HTML(
             value="""
             <div class='response-box'>
-                
+                <span class='response-label'>Predicted Next Tokens 🍓</span>
+                <p class='placeholder-text'>Type something above to see predictions 💕</p>
             </div>
             """,
             elem_id="output-box",
