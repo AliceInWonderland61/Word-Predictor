@@ -34,12 +34,19 @@ def predict_next_words(text):
 
 # 🍓 3️⃣ Custom pastel-pink CSS theme
 custom_css = """
-body {background-color: #FFE6EB;}
-.gradio-container {background-color: #FFE6EB !important;}
+body {
+    background-color: #FFE6EB;
+}
+.gradio-container {
+    background-color: #FFE6EB !important;
+}
 textarea, input {
-    background-color: #fff8f9 !important;
+    background-color: #fffdfd !important; /* softer white */
+    color: #5a3d3d !important; /* dark berry brown text */
     border-radius: 20px !important;
     border: 2px solid #ffc9d6 !important;
+    font-size: 16px !important;
+    padding: 8px !important;
 }
 button {
     background-color: #ffb6c1 !important;
@@ -55,13 +62,15 @@ button:hover {
     background-color: #fff0f5 !important;
     border-radius: 15px !important;
     padding: 10px;
+    color: #4b2b30 !important;
 }
 h1, h3 {
     color: #d36b83;
     font-family: "Comic Sans MS", "Poppins", sans-serif;
     text-align: center;
 }
-"""  # ✅ make sure this closing triple quote is present!
+""" 
+
 
 # 🍓 4️⃣ Define Gradio interface
 demo = gr.Blocks(css=custom_css)
