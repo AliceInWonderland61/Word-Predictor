@@ -123,8 +123,7 @@ with demo:
         output = gr.HTML(
             value="""
             <div class='response-box'>
-                <span class='response-label'>Predicted Next Tokens 🍓</span>
-                Type something above to see predictions 💕
+                
             </div>
             """,
             elem_id="output-box",
