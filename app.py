@@ -59,4 +59,7 @@ button:hover {
 }
 h1, h3 {
     color: #d36b83;
-    font-
+    font-family: "Comic Sans MS", "Poppins", sans-serif;
+    text-align: center;
+}
+"""  # ✅ <--- This closing triple quote is REQUIRED
