@@ -63,7 +63,6 @@ button {
 button:hover {
     background-color: #ffa8b8 !important;
 }
-
 /* 🍓 Output box styling (like “Generated Response”) */
 .response-box {
     background-color: #ffd6e0 !important; /* soft strawberry cream */
